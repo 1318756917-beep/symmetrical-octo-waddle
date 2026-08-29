@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>我的素材库</title><style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#161616;color:#e8e8e8;min-height:100vh;}
+.header{padding:18px 24px;border-bottom:1px solid #333;display:flex;align-items:center;gap:16px;position:sticky;top:0;background:#161616;z-index:100;}
+.header h1{font-size:18px;font-weight:600;color:#f0a030;}
+.header .count{font-size:12px;color:#6b6b6b;}
+.search{flex:1;max-width:320px;margin-left:auto;}
+.search input{width:100%;height:34px;background:#252525;border:1px solid #333;border-radius:8px;padding:0 12px;color:#e8e8e8;font-size:13px;outline:none;}
+.search input:focus{border-color:#f0a030;}
+.main{padding:24px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.card{background:#1e1e1e;border:1px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.card:hover{border-color:#f0a030;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.4);}
+.thumb{width:100%;aspect-ratio:1;background:#252525;overflow:hidden;}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.card:hover .thumb img{transform:scale(1.05);}
+.info{padding:9px 11px;}
+.name{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.meta{font-size:10px;color:#6b6b6b;margin-top:3px;}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.tag{padding:1px 7px;background:#252525;border-radius:8px;font-size:10px;color:#a0a0a0;}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:50vh;color:#6b6b6b;gap:10px;}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:1000;}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;}
+.lightbox .close{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:20px;cursor:pointer;}
+.lightbox .info{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(30,30,30,.9);padding:7px 16px;border-radius:8px;font-size:12px;color:#a0a0a0;max-width:80vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media(max-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}}
+</style></head><body><div class="header"><h1>我的素材库</h1><span class="count" id="count"></span><div class="search"><input type="text" id="searchInput" placeholder="搜索素材..."></div></div><div class="main"><div class="grid" id="grid"><div class="empty">还没有素材</div></div></div><div class="lightbox" id="lb"><button class="close" onclick="closeLb()">&times;</button><img id="lbImg" src=""><div class="info" id="lbInfo"></div></div><script>
+const DATA=[];
+document.getElementById('count').textContent=DATA.length+' 张图片';
+document.getElementById('searchInput').addEventListener('input',function(e){
+  const q=e.target.value.toLowerCase();
+  document.getElementById('grid').innerHTML=DATA.filter(a=>!q||a.name.toLowerCase().includes(q)||(a.tags||[]).some(t=>t.toLowerCase().includes(q)))
+    .map((a,i)=>'<div class="card" onclick="openLb('+i+')"><div class="thumb"><img src="'+a.url+'" alt="'+a.name+'" loading="lazy"></div><div class="info"><div class="name">'+a.name+'</div></div></div>').join('')||'<div class="empty">没有找到匹配的素材</div>';
+});
+function openLb(i){const a=DATA[i];if(!a)return;document.getElementById('lbImg').src=a.url;document.getElementById('lbInfo').textContent=a.name+(a.width?' · '+a.width+'×'+a.height:'');document.getElementById('lb').classList.add('show');}
+function closeLb(){document.getElementById('lb').classList.remove('show');}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target.id==='lb')closeLb();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+</script></body></html>
